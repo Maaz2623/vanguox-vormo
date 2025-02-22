@@ -1,10 +1,35 @@
 import { db } from "@/db";
 import { organizations } from "@/db/schema";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
+import { TRPCError } from "@trpc/server";
 import { and, desc, eq, lt, or } from "drizzle-orm";
 import z from "zod";
 
 export const organizationsRouter = createTRPCRouter({
+  getOne: baseProcedure
+    .input(
+      z.object({
+        id: z.string().uuid(),
+      })
+    )
+    .query(async ({ input }) => {
+      const [organization] = await db
+        .select()
+        .from(organizations)
+        .where(eq(organizations.id, input.id));
+
+      if (!organization) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      return organization;
+    }),
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const { email } = ctx.user;
 

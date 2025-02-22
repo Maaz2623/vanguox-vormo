@@ -32,7 +32,7 @@ export const AppSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="mt-12">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
@@ -69,7 +69,7 @@ export const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               {sidebarPrivateItems.map((item) => {
-                const isActive = item.url === pathname;
+                const isActive = pathname.includes(item.url);
 
                 return (
                   <SidebarMenuItem key={item.title} className="">
