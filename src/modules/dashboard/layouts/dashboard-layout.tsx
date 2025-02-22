@@ -9,10 +9,10 @@ export default async function DashboardLayout({
 }) {
   return (
     <div>
-      <SidebarProvider className="">
-      <Navbar />
+      <SidebarProvider>
+        <Navbar />
         <AppSidebar />
-        <main className="mt-12">{children}</main>
+        <main className="mt-12 w-full">{children}</main>
       </SidebarProvider>
     </div>
   );

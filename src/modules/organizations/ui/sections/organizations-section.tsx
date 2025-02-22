@@ -1,9 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { ORGANIZATION_FETCH_LIMIT } from "@/constants";
 import { trpc } from "@/trpc/client";
 import React, { Suspense } from "react";
-import toast from "react-hot-toast";
 import { ErrorBoundary } from "react-error-boundary";
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import {
@@ -14,9 +12,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { format } from "date-fns";
+import { OrganizationTableActions } from "../components/organization-table-actions";
 
 export const OrganizationsSection = () => {
   return (
@@ -40,74 +40,77 @@ const OrganizationsSectionSuspense = () => {
 
   const { data: session } = useSession();
 
-  const utils = trpc.useUtils();
-
-  const create = trpc.organizations.create.useMutation({
-    onSuccess: () => {
-      utils.organizations.getMany.invalidate();
-    },
-  });
-
-  const handleCreate = async () => {
-    toast.promise(
-      create.mutateAsync(), // This returns a Promise
-      {
-        loading: "Creating organization...",
-        success: "Organization created successfully!",
-        error: "Failed to create organization.",
-      },
-      {
-        success: {
-          icon: "🔥",
-        },
-      }
-    );
-  };
-
   return (
     <div>
-      <div className="border-y">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="pl-6 w-[510px]">Video</TableHead>
-              <TableHead>Visibility</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="">Views</TableHead>
-              <TableHead className="">Comments</TableHead>
-              <TableHead className="pr-6">Likes</TableHead>
+      <div className="border-y rounded-lg overflow-hidden">
+        <Table className="">
+          <TableHeader className="">
+            <TableRow className="bg-neutral-100">
+              <TableHead className="w-[350px] font-bold">
+                Organization name
+              </TableHead>
+              <TableHead className="font-bold">Slug</TableHead>
+              <TableHead className="font-bold">Owned by</TableHead>
+              <TableHead className="font-bold">Status</TableHead>
+              <TableHead className="font-bold">Members</TableHead>
+              <TableHead className="font-bold">Created At</TableHead>
+              <TableHead className="font-bold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.pages
               .flatMap((page) => page.items)
-              .map((organization) => (
-                <Link
-                  href={`/dashboard/organizations/${organization.id}`}
-                  key={organization.id}
-                  legacyBehavior
-                >
-                  <TableRow className="cursor-pointer">
-                    <TableCell>{organization.name}</TableCell>
-                    <TableCell>
-                      {session?.user?.email === organization.ownerEmail
-                        ? "You"
-                        : organization.ownerEmail}
-                    </TableCell>
-                    <TableCell>
-                      {format(organization.createdAt, "yyyy-MMM-dd")}
-                    </TableCell>
-                  </TableRow>
-                </Link>
-              ))}
+              .map((organization) => {
+                const isOwner =
+                  organization.ownerEmail === session?.user?.email;
+
+                return (
+                  <Link
+                    href={`/dashboard/organizations/${organization.slug}`}
+                    key={organization.id}
+                    legacyBehavior
+                  >
+                    <TableRow className="cursor-pointer">
+                      <TableCell>{organization.name}</TableCell>
+                      <TableCell>{organization.slug}</TableCell>
+                      <TableCell>
+                        {session?.user?.email === organization.ownerEmail
+                          ? "You"
+                          : organization.ownerEmail}
+                      </TableCell>
+                      <TableCell>
+                        {organization.active ? (
+                          <Badge
+                            variant="outline"
+                            className="bg-green-200/80 border border-green-500 text-green-700 w-[70px] text-center flex justify-center items-center"
+                          >
+                            active
+                          </Badge>
+                        ) : (
+                          <Badge
+                            variant="outline"
+                            className="bg-rose-200/80 border border-rose-500 text-rose-700 text-center flex justify-center items-center w-[70px]"
+                          >
+                            inactive
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>{organization.memberCount}</TableCell>
+                      <TableCell>
+                        {format(organization.createdAt, "yyyy-MMM-dd")}
+                      </TableCell>
+                      <TableCell className="pl-4">
+                        <OrganizationTableActions
+                          isOwner={isOwner}
+                          organizationSlug={organization.slug}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  </Link>
+                );
+              })}
           </TableBody>
         </Table>
-      </div>
-      <div>
-        <Button onClick={handleCreate} disabled={create.isPending}>
-          Create Organization
-        </Button>
       </div>
       <InfiniteScroll
         // isManual

@@ -3,15 +3,15 @@ import React from "react";
 
 interface PageProps {
   params: Promise<{
-    organizationId: string;
+    organizationSlug: string;
   }>;
 }
 
 const OrganizationPage = async ({ params }: PageProps) => {
-  const { organizationId } = await params;
+  const { organizationSlug } = await params;
 
   const data = await trpc.organizations.getOne({
-    id: organizationId,
+    slug: organizationSlug,
   });
 
   return <div>Organization Page {data.ownerEmail}</div>;

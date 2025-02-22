@@ -1,10 +1,14 @@
 import {
+  boolean,
+  pgEnum,
   pgTable,
   text,
   timestamp,
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+
+export const roleEnum = pgEnum("role", ["ADMIN", "MODERATOR", "USER"]);
 
 export const users = pgTable(
   "users",
@@ -28,6 +32,23 @@ export const organizations = pgTable("organizations", {
     })
     .notNull(),
   name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  active: boolean("active").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const memberships = pgTable("memberships", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userEmail: text("email")
+    .references(() => users.email, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  organizationId: uuid("organziation_id")
+    .references(() => organizations.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  memberRole: roleEnum().default("USER").notNull(),
 });

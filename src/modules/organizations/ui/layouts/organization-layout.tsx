@@ -5,5 +5,5 @@ export default async function OrganizationLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="p-3">{children}</div>;
+  return <div className="p-3 ">{children}</div>;
 }
