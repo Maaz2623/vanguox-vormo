@@ -1,5 +1,5 @@
 import OrganizationView from "@/modules/organizations/ui/views/organization-view";
-import { trpc } from "@/trpc/server";
+import { HydrateClient, trpc } from "@/trpc/server";
 import React from "react";
 
 interface PageProps {
@@ -15,7 +15,16 @@ const OrganizationPage = async ({ params }: PageProps) => {
     slug: organizationSlug,
   });
 
-  return <OrganizationView organization={data} />;
+  void trpc.events.getMany.prefetchInfinite({
+    limit: 5,
+    organizationSlug: organizationSlug,
+  });
+
+  return (
+    <HydrateClient>
+      <OrganizationView organization={data} />;
+    </HydrateClient>
+  );
 };
 
 export default OrganizationPage;

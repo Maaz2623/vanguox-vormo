@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["ADMIN", "MODERATOR", "USER"]);
+export const eventTypeEnum = pgEnum("event_type", ["PUBLIC", "PRIVATE"]);
 
 export const users = pgTable(
   "users",
@@ -35,6 +36,19 @@ export const organizations = pgTable("organizations", {
   description: text("description"),
   slug: text("slug").notNull().unique(),
   active: boolean("active").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const events = pgTable("events", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  organizationSlug: text("organization_slug")
+    .references(() => organizations.slug, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  name: text("name").notNull(),
+  type: eventTypeEnum().default("PUBLIC").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -11,7 +11,7 @@ const OrganizationView = ({
   return (
     <div className="border-green-500 border p-4">
       <OrganizationProfileOverview organization={organization} />
-      <OrganizationDetailsSection />
+      <OrganizationDetailsSection organization={organization} />
     </div>
   );
 };

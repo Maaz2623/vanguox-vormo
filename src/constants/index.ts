@@ -27,5 +27,10 @@ export const sidebarPrivateItems = [
   },
 ];
 
+export const ORGANIZATION_FETCH_LIMIT = 5;
+export const EVENTS_FETCH_LIMIT = 5;
 
-export const ORGANIZATION_FETCH_LIMIT = 5
+export enum EventType {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
