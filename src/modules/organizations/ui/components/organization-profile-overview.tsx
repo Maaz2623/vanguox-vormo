@@ -40,7 +40,7 @@ export const OrganizationProfileOverview = async ({
               <Link
                 href={`/dashboard/organizations/${organization.slug}/settings`}
               >
-                <SettingsIcon />
+                <SettingsIcon className="" />
               </Link>
             </Button>
           )}

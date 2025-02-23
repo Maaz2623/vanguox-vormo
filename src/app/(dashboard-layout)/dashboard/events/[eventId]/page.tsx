@@ -1,11 +1,8 @@
-import React from 'react'
+"use client";
+import React from "react";
 
 const EventIdPage = () => {
-  return (
-    <div>
-      EventId Page
-    </div>
-  )
-}
+  return <div>Event Id page</div>;
+};
 
-export default EventIdPage
+export default EventIdPage;
