@@ -52,7 +52,6 @@ const OrganizationsSectionSuspense = () => {
               <TableHead className="font-bold">Slug</TableHead>
               <TableHead className="font-bold">Owned by</TableHead>
               <TableHead className="font-bold">Status</TableHead>
-              <TableHead className="font-bold">Members</TableHead>
               <TableHead className="font-bold">Created At</TableHead>
               <TableHead className="font-bold">Actions</TableHead>
             </TableRow>
@@ -95,7 +94,6 @@ const OrganizationsSectionSuspense = () => {
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>{organization.memberCount}</TableCell>
                       <TableCell>
                         {format(organization.createdAt, "yyyy-MMM-dd")}
                       </TableCell>

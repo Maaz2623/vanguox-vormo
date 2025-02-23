@@ -6,7 +6,7 @@ import {
   protectedProcedure,
 } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq, getTableColumns, lt, or } from "drizzle-orm";
+import { and, desc, eq, lt, or } from "drizzle-orm";
 import z from "zod";
 
 export const organizationsRouter = createTRPCRouter({
@@ -89,27 +89,9 @@ export const organizationsRouter = createTRPCRouter({
       const { cursor, limit } = input;
       const { email } = ctx.user;
 
-      // Create a valid subquery for counting members per organization
-      const memberCountSubquery = db
-        .select({
-          organizationId: memberships.organizationId,
-          count: db.$count(memberships).as("count"),
-        })
-        .from(memberships)
-        .where(eq(memberships.userEmail, email))
-        .groupBy(memberships.organizationId)
-        .as("memberCounts");
-
       const data = await db
-        .select({
-          ...getTableColumns(organizations),
-          memberCount: memberCountSubquery.count, // Select the count properly
-        })
+        .select()
         .from(organizations)
-        .leftJoin(
-          memberCountSubquery,
-          eq(organizations.id, memberCountSubquery.organizationId)
-        ) // Proper join
         .where(
           and(
             eq(organizations.ownerEmail, email),

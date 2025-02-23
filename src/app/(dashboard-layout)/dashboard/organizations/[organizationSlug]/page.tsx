@@ -1,3 +1,4 @@
+import OrganizationView from "@/modules/organizations/ui/views/organization-view";
 import { trpc } from "@/trpc/server";
 import React from "react";
 
@@ -14,7 +15,7 @@ const OrganizationPage = async ({ params }: PageProps) => {
     slug: organizationSlug,
   });
 
-  return <div>Organization Page {data.ownerEmail}</div>;
+  return <OrganizationView organization={data} />;
 };
 
 export default OrganizationPage;
